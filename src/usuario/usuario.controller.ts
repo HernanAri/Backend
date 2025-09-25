@@ -1,4 +1,4 @@
-import {Controller,Get,Post, Delete, Put,Body, Param, NotFoundException,ConflictException, HttpCode,BadRequestException,HttpStatus} from '@nestjs/common';
+import {Controller,Get,Post, Delete, Put,Body, Param, NotFoundException,ConflictException, HttpCode,BadRequestException,HttpStatus, ParseIntPipe} from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CrearUsuarioDto } from './usuario.dto';
 
@@ -12,10 +12,11 @@ export class UsuarioController {
     findAll(){
         return this.usuarioService.findAll()
     }
+    
 
     @Get(':id')
-    async findOne(@Param('id') id:string){
-        const user = await this.usuarioService.findOne(id);
+    async findOne(@Param('id', ParseIntPipe) id:number){
+        const user = await this.usuarioService.findByIdUsuario(id);
         if(!user) throw new NotFoundException('Usuario no encontrado')
         return user;    
     }

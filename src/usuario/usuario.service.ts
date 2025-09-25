@@ -19,16 +19,16 @@ export class UsuarioService {
         return await user.save()
     }
 
-    async findOne(idusuario: string) {
-        const usuario = await this.userModel.findOne({ idusuario });
+    async findOne(username: string) {
+        const usuario = await this.userModel.findOne({ username });
         if (!usuario) {
         throw new NotFoundException('Usuario no encontrado');
         }
         return usuario;
     }
 
-    async eliminar(idusuario: string) {
-        const usuario = await this.userModel.findOneAndDelete({ idusuario });
+    async eliminar(username: string) {
+        const usuario = await this.userModel.findOneAndDelete({ username });
     
         if (!usuario) {
         throw new NotFoundException('Usuario no encontrado');
@@ -38,9 +38,9 @@ export class UsuarioService {
     }
     
 
-    async actualizar(idusuario: string, updateDto: Partial<CrearUsuarioDto>) {
+    async actualizar(username: string, updateDto: Partial<CrearUsuarioDto>) {
         const usuario = await this.userModel.findOneAndUpdate(
-        { idusuario }, 
+        { username }, 
         updateDto, 
         { new: true, runValidators: true }
         );
@@ -51,4 +51,11 @@ export class UsuarioService {
     
         return usuario;
     }
+
+    async findByIdUsuario(idusuario: number) {
+        const usuario = await this.userModel.findOne({ idusuario }).exec();
+        if (!usuario) throw new NotFoundException('Usuario no encontrado');
+        return usuario;
+    }
+
 }

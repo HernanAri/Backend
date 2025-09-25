@@ -7,6 +7,7 @@ import { error } from 'console';
 import { UsuarioService } from 'src/usuario/usuario.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { AutenticadorService } from 'src/autenticador/autenticador.service';
 
 @Injectable()
 export class QrcodeService {
@@ -22,9 +23,8 @@ export class QrcodeService {
             throw new NotFoundException ('Usuario no encontrado');
         }
 
-        const datosUsuario = `ID: ${usuario.idusuario}, Nombre: ${usuario.nombre}, Email: ${usuario.correo}`;
         try {
-            const qrCodeDataUrl = await QRCode.toDataURL(datosUsuario);
+            const qrCodeDataUrl = await QRCode.toDataURL(idusuario.toString());
             return qrCodeDataUrl;
         } catch (err) {
             throw new Error(`Error al generar el código QR: ${err.message}`);
