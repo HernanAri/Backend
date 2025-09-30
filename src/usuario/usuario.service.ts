@@ -19,16 +19,16 @@ export class UsuarioService {
         return await user.save()
     }
 
-    async findOne(username: string) {
-        const usuario = await this.userModel.findOne({ username });
+    async findOne(idusuario: string) {
+        const usuario = await this.userModel.findOne({ idusuario });
         if (!usuario) {
         throw new NotFoundException('Usuario no encontrado');
         }
         return usuario;
     }
 
-    async eliminar(username: string) {
-        const usuario = await this.userModel.findOneAndDelete({ username });
+    async eliminar(idusuario: string) {
+        const usuario = await this.userModel.findOneAndDelete({ idusuario });
     
         if (!usuario) {
         throw new NotFoundException('Usuario no encontrado');
