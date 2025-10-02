@@ -1,6 +1,7 @@
-import {Controller,Get,Post, Delete, Put,Body, Param, NotFoundException,ConflictException, HttpCode,BadRequestException,HttpStatus} from '@nestjs/common';
+import {Controller,Get,Post, Delete, Put,Body, Param, NotFoundException,ConflictException, HttpCode,BadRequestException,HttpStatus, ParseIntPipe} from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CrearUsuarioDto } from './usuario.dto';
+import { ActualizarUserDto } from './ActualizarUsuario.dto';
 
 
 
@@ -12,10 +13,11 @@ export class UsuarioController {
     findAll(){
         return this.usuarioService.findAll()
     }
+    
 
-    @Get(':id')
-    async findOne(@Param('id') id:string){
-        const user = await this.usuarioService.findOne(id);
+    @Get(':idusuario')
+    async findOne(@Param('idusuario', ParseIntPipe) idusuario:number){
+        const user = await this.usuarioService.findByIdUsuario(idusuario);
         if(!user) throw new NotFoundException('Usuario no encontrado')
         return user;    
     }
@@ -42,24 +44,30 @@ export class UsuarioController {
             }
         }
 
-        @Delete(':id')
-        @HttpCode(HttpStatus.NO_CONTENT)
-        async eliminar(@Param('id') id: string) {
-            try {
-            const user = await this.usuarioService.eliminar(id);
-            if (!user) throw new NotFoundException('Usuario no encontrado');
-            return user;
-            } catch (error) {
-            console.error('Error al eliminar usuario:', error);
-            throw new BadRequestException(error.message || 'Error al eliminar usuario');
-            }
-        }
+    @Delete(':idusuario')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async eliminar(@Param('idusuario',ParseIntPipe) idusuario: number) {
+    try {
+        const user = await this.usuarioService.eliminar(idusuario.toString());
+        if (!user) throw new NotFoundException('Usuario no encontrado');
+    } catch (error) {
+        console.error('Error al eliminar usuario:', error);
 
-    @Put(':id')
-    async actualizar(@Param('id') id:string, @Body() body:any){
-        const user = await this.usuarioService.actualizar(id, body);
-        if(!user) throw new NotFoundException('User no encontrado')
-        return user;
+    if (error instanceof NotFoundException) {
+      throw error; // Mantiene el 404
     }
 
+    throw new BadRequestException(error.message || 'Error al eliminar usuario');
+  }
+}
+
+    @Put(':idusuario')
+    async actualizar(
+    @Param('idusuario', ParseIntPipe) idusuario: number,
+    @Body() body: ActualizarUserDto
+    ) {
+    const user = await this.usuarioService.actualizar(idusuario.toString(), body);
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    return user;
+    }
 }

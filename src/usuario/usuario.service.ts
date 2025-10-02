@@ -38,9 +38,9 @@ export class UsuarioService {
     }
     
 
-    async actualizar(idusuario: string, updateDto: Partial<CrearUsuarioDto>) {
+    async actualizar(username: string, updateDto: Partial<CrearUsuarioDto>) {
         const usuario = await this.userModel.findOneAndUpdate(
-        { idusuario }, 
+        { username }, 
         updateDto, 
         { new: true, runValidators: true }
         );
@@ -51,4 +51,11 @@ export class UsuarioService {
     
         return usuario;
     }
+
+    async findByIdUsuario(idusuario: number) {
+        const usuario = await this.userModel.findOne({ idusuario }).exec();
+        if (!usuario) throw new NotFoundException('Usuario no encontrado');
+        return usuario;
+    }
+
 }

@@ -5,9 +5,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsuarioSchema } from 'src/usuario/usuario.schema';
 import { jwtConstants } from './constants';
+import { UsuarioModule } from 'src/usuario/usuario.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{'name': 'User', schema: UsuarioSchema}]),  JwtModule.register({
+  imports: [
+    UsuarioModule,
+    MongooseModule.forFeature([{'name': 'User', schema: UsuarioSchema}]),  JwtModule.register({
     global: true,
     secret: jwtConstants.secret,
     signOptions: { expiresIn: '60s' },

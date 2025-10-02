@@ -44,7 +44,7 @@ export class Usuario {
     @Prop({
         required: true
     })
-    vehicle:string;
+    vehiculo:string;
 
     @Prop({
         required: true,

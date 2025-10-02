@@ -13,4 +13,5 @@ export class QrcodeController {
         const qrCodeBuffer=Buffer.from(qrCodeBase64,'base64');
         return res.type('image/png').send(qrCodeBuffer);
     }
+    
 }
