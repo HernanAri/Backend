@@ -14,9 +14,9 @@ export class UsuarioController {
     }
     
 
-    @Get(':id')
-    async findOne(@Param('id', ParseIntPipe) id:number){
-        const user = await this.usuarioService.findByIdUsuario(id);
+    @Get(':idusuario')
+    async findOne(@Param('idusuario', ParseIntPipe) idusuario:number){
+        const user = await this.usuarioService.findByIdUsuario(idusuario);
         if(!user) throw new NotFoundException('Usuario no encontrado')
         return user;    
     }
@@ -43,11 +43,11 @@ export class UsuarioController {
             }
         }
 
-        @Delete(':id')
+        @Delete(':idusuario')
         @HttpCode(HttpStatus.NO_CONTENT)
-        async eliminar(@Param('id') id: string) {
+        async eliminar(@Param('idusuario') idusuario: string) {
             try {
-            const user = await this.usuarioService.eliminar(id);
+            const user = await this.usuarioService.eliminar(idusuario);
             if (!user) throw new NotFoundException('Usuario no encontrado');
             return user;
             } catch (error) {
@@ -56,10 +56,10 @@ export class UsuarioController {
             }
         }
 
-    @Put(':id')
-    async actualizar(@Param('id') id:string, @Body() body:any){
-        const user = await this.usuarioService.actualizar(id, body);
-        if(!user) throw new NotFoundException('User no encontrado')
+    @Put(':idusuario')
+    async actualizar(@Param('idusuario') idusuario: string, @Body() body: any) {
+        const user = await this.usuarioService.actualizar(idusuario, body);
+        if (!user) throw new NotFoundException('Usuario no encontrado');
         return user;
     }
 

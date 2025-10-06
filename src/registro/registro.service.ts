@@ -11,8 +11,10 @@ export class RegistroService {
   ) {}
 
   async iniciarSesion(idusuario: string) {
-    const sesionActiva = await this.sesionModel.findOne({ idusuario, estado: 'activa' });
-    if (sesionActiva) throw new ConflictException('Ya hay una sesión activa');
+  const usuario = await this.sesionModel.findOne({ idusuario });
+  if (!usuario) {
+    throw new NotFoundException('Usuario no encontrado');
+  }
 
     const nuevaSesion = new this.sesionModel({
       idusuario,
