@@ -1,6 +1,7 @@
 import {Controller,Get,Post, Delete, Put,Body, Param, NotFoundException,ConflictException, HttpCode,BadRequestException,HttpStatus, ParseIntPipe} from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CrearUsuarioDto } from './usuario.dto';
+import { ActualizarUserDto } from './ActualizarUsuario.dto';
 
 
 
@@ -43,7 +44,7 @@ export class UsuarioController {
             }
         }
 
-        @Delete(':idusuario')
+        /*@Delete(':idusuario')
         @HttpCode(HttpStatus.NO_CONTENT)
         async eliminar(@Param('idusuario') idusuario: string) {
             try {
@@ -62,5 +63,31 @@ export class UsuarioController {
         if (!user) throw new NotFoundException('Usuario no encontrado');
         return user;
     }
+}*/
+        @Delete(':idusuario')
+        @HttpCode(HttpStatus.NO_CONTENT)
+        async eliminar(@Param('idusuario',ParseIntPipe) idusuario: number) {
+        try {
+            const user = await this.usuarioService.eliminar(idusuario.toString());
+            if (!user) throw new NotFoundException('Usuario no encontrado');
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
 
+        if (error instanceof NotFoundException) {
+        throw error; // Mantiene el 404
+        }
+
+        throw new BadRequestException(error.message || 'Error al eliminar usuario');
+    }
+}
+
+    @Put(':idusuario')
+        async actualizar(
+        @Param('idusuario', ParseIntPipe) idusuario: number,
+        @Body() body: ActualizarUserDto
+        ) {
+        const user = await this.usuarioService.actualizar(idusuario.toString(), body);
+        if (!user) throw new NotFoundException('Usuario no encontrado');
+        return user;
+    }
 }

@@ -27,9 +27,9 @@ export class UsuarioService {
         return usuario;
     }
 
-    async eliminar(idusuario: string) {
-        const usuario = await this.userModel.findOneAndDelete({ idusuario });
-
+    async eliminar(username: string) {
+        const usuario = await this.userModel.findOneAndDelete({ username });
+    
         if (!usuario) {
         throw new NotFoundException('Usuario no encontrado');
         }
