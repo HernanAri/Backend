@@ -11,18 +11,30 @@ export class RegistroService {
   ) {}
 
   async iniciarSesion(idusuario: string) {
-  const usuario = await this.sesionModel.findOne({ idusuario });
-  if (!usuario) {
-    throw new NotFoundException('Usuario no encontrado');
+  const sesionActiva = await this.sesionModel.findOne({idusuario, estado: 'activa'});
+  if (sesionActiva) throw new ConflictException('La sesion ya esta activa');
+
+  const nuevaSesion = new this.sesionModel({
+    idusuario,
+    inicio: new Date(),
+    estado: 'activa'
+  });
+  return nuevaSesion.save();
   }
 
-    const nuevaSesion = new this.sesionModel({
+  async obtenerResumenSemanal (idusuario: string){
+    const semanaPasada = new Date();
+    semanaPasada.setDate(semanaPasada.getDate() -7);
+
+    const sesiones = await this.sesionModel.find({
       idusuario,
-      inicio: new Date(),
-      estado: 'activa'
+      inicio: {$gte: semanaPasada}
     });
 
-    return nuevaSesion.save();
+    const totalsegundos = sesiones.reduce((acc,s) => acc + (s.duracion || 0),0);
+    const horas = (totalsegundos /3600).toFixed(2);
+
+    return {totalHoras: horas,sesiones}
   }
 
   async finalizarSesion(idusuario: string) {

@@ -19,4 +19,9 @@ export class RegistroController {
   obtenerSesiones(@Param('idusuario') idusuario: string) {
     return this.registroService.obtenerSesiones(idusuario);
   }
+
+  @Get('resumen/:idusuario')
+  obtenerResumenSemanal(@Param('idusuario') idusuario: string){
+    return this.registroService.obtenerResumenSemanal(idusuario)
+  }
 }
