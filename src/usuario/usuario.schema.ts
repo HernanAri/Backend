@@ -1,4 +1,4 @@
-import  { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 export type UsuarioDocument = Usuario & Document;
@@ -6,94 +6,104 @@ export type UsuarioDocument = Usuario & Document;
 @Schema({
     timestamps: true,
     toJSON: { 
-    virtuals: true,
-    transform: (doc, ret) => {
-        ret.id = ret.idusuario; 
-        delete ret._id;
-        delete ret.__v;
-        return ret;
+        virtuals: true,
+        transform: (doc, ret) => {
+            ret.id = ret.idusuario; 
+            delete ret._id;
+            delete ret.__v;
+            delete ret.password; // IMPORTANTE: nunca exponer el password
+            return ret;
+        }
     }
-}
 })
-
-
 export class Usuario {
     @Prop({
         required: true,
-        unique: true
+        unique: true,
+        index: true // Índice para búsquedas más rápidas
     })
     idusuario: number;
 
     @Prop({
         required: true,
-        unique: true
+        trim: true // Elimina espacios en blanco
     })
-    nombre:string;
+    nombre: string;
+
+    @Prop({
+        required: true,
+        unique: true,
+        index: true
+    })
+    documento: number;
+
+    @Prop({ required: true, trim: true })
+    cargo: string;
+
+    @Prop({ trim: true })
+    vehiculo: string;
+
+    @Prop({ trim: true })
+    matricula: string;
+
+    @Prop({ 
+        required: true,
+        enum: ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-']
+    })
+    RH: string;
+
+    @Prop({
+        required: true,
+        unique: true,
+        lowercase: true, // Normaliza el email
+        trim: true,
+        match: [/^\S+@\S+\.\S+$/, 'Email inválido'] // Validación básica
+    })
+    correo: string;
+
+    @Prop({ required: true, trim: true })
+    direccion: string;
 
     @Prop({
         required: true,
         unique: true
     })
-    documento:number;
+    celular: number;
 
-    @Prop({
-        required: true
-    })
-    cargo:string;
+    @Prop({ trim: true })
+    elementos: string;
 
-    @Prop({
-        required: true
+    @Prop({ 
+        required: true,
+        enum: ['admin', 'usuario', 'supervisor', 'vigilante'], // Define roles permitidos
+        default: 'usuario'
     })
-    vehiculo:string;
+    rol: string;
 
     @Prop({
         required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        index: true
     })
-    matricula:string;
-
-    @Prop({
-        required: true
-    })
-    RH:string
-
-    @Prop({
-        required: true,
-        unique: true
-    })
-    correo:string;
-
-    @Prop({
-        required: true
-    })
-    direccion:string
+    username: string;
 
     @Prop({
         required: true,
-        unique: true
+        select: false // No incluir en queries por defecto
     })
-    celular:number
+    password: string;
 
-    @Prop({
-        required: true
-    })
-    elementos:string
+    @Prop({ default: true })
+    activo: boolean; // Para desactivar usuarios sin eliminarlos
 
-    @Prop({
-        required: true
-    })
-    rol:string
-
-    @Prop({
-        required:true,
-        unique: true
-    })
-    username:string
-
-    @Prop({
-        required:true,
-        unique:true
-    })
-    password:string
+    @Prop()
+    ultimoLogin: Date;
 }
 
-export const UsuarioSchema = SchemaFactory.createForClass(Usuario)
+export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
+
+// Índices compuestos para mejorar rendimiento
+UsuarioSchema.index({ username: 1, activo: 1 });
+UsuarioSchema.index({ correo: 1, activo: 1 });
