@@ -12,20 +12,16 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
 @Module({
   imports: [
     ConfigModule,
-    PassportModule.register({ defaultStrategy: 'jwt' }), // Agregar PassportModule
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     UsuarioModule,
     MongooseModule.forFeature([
       { name: Usuario.name, schema: UsuarioSchema }
     ]),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your-secret-key-change-in-production',
-        signOptions: { 
-          expiresIn: configService.get<string>('JWT_EXPIRATION') || '1h'
-        },
-      }),
-      inject: [ConfigService],
+    JwtModule.register({
+      secret: 'Pollo', // FIXED: Use consistent secret
+      signOptions: { 
+        expiresIn: '1h'
+      },
     }),
   ],
   providers: [AutenticadorService, JwtStrategy],

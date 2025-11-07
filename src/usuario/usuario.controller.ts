@@ -2,6 +2,7 @@ import {Controller,Get,Post, Delete, Put,Body, Param, NotFoundException,Conflict
 import { UsuarioService } from './usuario.service';
 import { CrearUsuarioDto } from './usuario.dto';
 import { ActualizarUserDto } from './ActualizarUsuario.dto';
+import * as bcrypt from 'bcrypt';
 
 
 
@@ -89,5 +90,32 @@ export class UsuarioController {
         const user = await this.usuarioService.actualizar(idusuario.toString(), body);
         if (!user) throw new NotFoundException('Usuario no encontrado');
         return user;
+    }
+
+    @Post('set-password')
+    async setPassword(@Body() body: { username: string, password: string }) {
+        try {
+            const hashedPassword = await bcrypt.hash(body.password, 10);
+        
+            const usuario = await this.usuarioService['userModel'].findOneAndUpdate(
+            { username: body.username },
+            { password: hashedPassword },
+            { new: true }
+            );
+
+            if (!usuario) {
+            throw new NotFoundException('Usuario no encontrado');
+            }
+
+            return {
+            message: 'Contraseña actualizada correctamente',
+            username: body.username
+            };
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+            throw error;
+            }
+            throw new BadRequestException('Error al actualizar contraseña');
+        }
     }
 }
