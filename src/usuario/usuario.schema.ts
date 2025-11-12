@@ -75,7 +75,7 @@ export class Usuario {
 
     @Prop({ 
         required: true,
-        enum: ['admin', 'usuario', 'supervisor', 'vigilante'], // Define roles permitidos
+        enum: ['Admin', 'Usuario', 'Supervisor', 'Vigilante','admin', 'usuario', 'supervisor', 'vigilante'],
         default: 'usuario'
     })
     rol: string;
