@@ -45,6 +45,7 @@ export class QrcodeService {
         }
     }
 
+
     // Método adicional para verificar el token del QR
     async verifyQRToken(token: string) {
         try {
