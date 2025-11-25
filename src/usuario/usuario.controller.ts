@@ -44,7 +44,7 @@ export class UsuarioController {
             }
         }
 
-        /*@Delete(':idusuario')
+    /*@Delete(':idusuario')
         @HttpCode(HttpStatus.NO_CONTENT)
         async eliminar(@Param('idusuario') idusuario: string) {
             try {
@@ -64,7 +64,7 @@ export class UsuarioController {
         return user;
     }
 }*/
-        @Delete(':idusuario')
+    @Delete(':idusuario')
         @HttpCode(HttpStatus.NO_CONTENT)
         async eliminar(@Param('idusuario',ParseIntPipe) idusuario: number) {
         try {
