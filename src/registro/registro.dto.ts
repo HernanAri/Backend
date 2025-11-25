@@ -1,6 +1,7 @@
-import {IsString} from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
-export class CrearRegistroDto{
-    @IsString()
-    nombre: string
+export class IniciarSesionDto {
+  @IsString()
+  @IsNotEmpty()
+  token: string; // Token JWT del QR escaneado
 }

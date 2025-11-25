@@ -1,22 +1,32 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 import { UsuarioModule } from './usuario/usuario.module';
-import { LoginModule } from './login/login.module';
-import { CreadorQrModule } from './creador-qr/creador-qr.module';
 import { AutenticadorModule } from './autenticador/autenticador.module';
-
+import { RegistroModule } from './registro/registro.module';
+import { QrcodeModule } from './creador-qr/creador-qr.module';
+import { PasswordMigrationService } from './password-migration.service';
+import { Usuario, UsuarioSchema } from './usuario/usuario.schema';
 
 @Module({
   imports: [
-    AutenticadorModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    MongooseModule.forRoot(
+      process.env.MONGODB_URI || 
+      'mongodb+srv://proyecto_final:prueba@bd.qssnf.mongodb.net/'
+    ),
+    // Importa el schema de Usuario para el servicio de migración
+    MongooseModule.forFeature([
+      { name: Usuario.name, schema: UsuarioSchema }
+    ]),
     UsuarioModule,
-    LoginModule, 
-    CreadorQrModule,
-    MongooseModule.forRoot('mongodb+srv://proyecto_final:proyectofinal2@bd.qssnf.mongodb.net/')
+    AutenticadorModule,
+    QrcodeModule,
+    RegistroModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [PasswordMigrationService],
 })
 export class AppModule {}

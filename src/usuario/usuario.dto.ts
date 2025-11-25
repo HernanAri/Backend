@@ -1,13 +1,14 @@
 import {  IsEmail, IsNotEmpty, IsNumber, IsString, IsIn, MinLength, MaxLength} from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class CrearUsuarioDto{
     @IsNotEmpty()
-    
     idusuario: number;
 
     @IsString()
     nombre: string;
 
+    @Type(()=>Number)
     @IsNumber()
     documento: number;
 
@@ -30,6 +31,7 @@ export class CrearUsuarioDto{
     @IsString()
     direccion:string;
 
+    @Type(()=>Number)
     @IsNumber()
     celular: number;
 

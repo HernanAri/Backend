@@ -1,10 +1,12 @@
-import {IsString, MinLength, MaxLength} from 'class-validator'
+import { IsString, IsNotEmpty, MinLength } from 'class-validator';
 
-export class CrearLoginDto{
+export class LoginDto {
     @IsString()
-    username:string;
+    @IsNotEmpty({ message: 'El username es requerido' })
+    username: string;
 
-    @MinLength(4)
-    @MaxLength(12)
-    password:string;
+    @IsString()
+    @IsNotEmpty({ message: 'La contraseña es requerida' })
+    @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
+    password: string;
 }

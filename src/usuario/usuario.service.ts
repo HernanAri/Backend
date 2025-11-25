@@ -1,54 +1,63 @@
-import { Injectable ,NotFoundException} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Usuario } from './usuario.schema';
 import { CrearUsuarioDto } from './usuario.dto';
 import { Model } from 'mongoose';
-import { ActualizarUserDto } from './ActualizarUsuario.dto';
-
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
     constructor(@InjectModel(Usuario.name) private userModel: Model<Usuario>) {}
 
-    findAll(){
-        return this.userModel.find()
+    findAll() {
+        return this.userModel.find();
     }
 
-    async crear(crearUsuario: CrearUsuarioDto){
-        const user = new this.userModel(crearUsuario);
-        return await user.save()
+    async crear(dto: CrearUsuarioDto) {
+        const hashedPassword = await bcrypt.hash(dto.password, 10);
+        const user = new this.userModel({ ...dto, password: hashedPassword });
+        return user.save();
     }
 
-    async findOne(idusuario: string) {
-        const usuario = await this.userModel.findOne({ idusuario });
+    // ✅ MÉTODO CORREGIDO: Incluye password con select('+password')
+    async findOne(username: string) {
+        const usuario = await this.userModel
+            .findOne({ username })
+            .select('+password') // ← CRÍTICO: Incluye el password
+            .exec();
+        
         if (!usuario) {
-        throw new NotFoundException('Usuario no encontrado');
+            throw new NotFoundException('Usuario no encontrado');
         }
         return usuario;
     }
 
-    async eliminar(username: string) {
-        const usuario = await this.userModel.findOneAndDelete({ username });
-    
+    async eliminar(idusuario: string) {
+        const usuario = await this.userModel.findOneAndDelete({ idusuario });
+        
         if (!usuario) {
-        throw new NotFoundException('Usuario no encontrado');
+            throw new NotFoundException('Usuario no encontrado');
         }
-    
+        
         return usuario;
     }
-    
 
     async actualizar(idusuario: string, updateDto: Partial<CrearUsuarioDto>) {
-        const usuario = await this.userModel.findOneAndUpdate(
-        { idusuario }, 
-        updateDto, 
-        { new: true, runValidators: true }
-        );
-    
-        if (!usuario) {
-        throw new NotFoundException('Usuario no encontrado');
+        // Si se actualiza la contraseña, hashearla
+        if (updateDto.password) {
+            updateDto.password = await bcrypt.hash(updateDto.password, 10);
         }
-    
+
+        const usuario = await this.userModel.findOneAndUpdate(
+            { idusuario },
+            updateDto,
+            { new: true, runValidators: true }
+        );
+        
+        if (!usuario) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+        
         return usuario;
     }
 
@@ -57,5 +66,4 @@ export class UsuarioService {
         if (!usuario) throw new NotFoundException('Usuario no encontrado');
         return usuario;
     }
-
 }
