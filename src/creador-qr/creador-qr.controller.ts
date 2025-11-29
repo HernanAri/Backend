@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, ParseIntPipe, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Res, ParseIntPipe, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { QrcodeService } from './creador-qr.service';
 import { Response } from 'express';
 
@@ -6,6 +6,10 @@ import { Response } from 'express';
 export class QrcodeController {
     constructor(private readonly qrcodeService: QrcodeService) {}
 
+    /**
+     * Genera y devuelve imagen del QR para un usuario
+     * GET /qrcode/:idusuario
+     */
     @Get(':idusuario')
     async getQrCode(
         @Param('idusuario', ParseIntPipe) idusuario: number,
@@ -17,9 +21,23 @@ export class QrcodeController {
         return res.type('image/png').send(qrCodeBuffer);
     }
 
-    // Endpoint adicional para verificar el token escaneado
+    /**
+     * Verifica el token escaneado
+     * POST /qrcode/verify
+     */
     @Post('verify')
+    @HttpCode(HttpStatus.OK)
     async verifyQrToken(@Body('token') token: string) {
         return await this.qrcodeService.verifyQRToken(token);
+    }
+
+    /**
+     * Login directo con QR
+     * POST /qrcode/login
+     */
+    @Post('login')
+    @HttpCode(HttpStatus.OK)
+    async loginWithQR(@Body('token') token: string) {
+        return await this.qrcodeService.loginWithQR(token);
     }
 }

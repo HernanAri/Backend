@@ -7,6 +7,7 @@ import { RegistroModule } from './registro/registro.module';
 import { QrcodeModule } from './creador-qr/creador-qr.module';
 import { PasswordMigrationService } from './password-migration.service';
 import { Usuario, UsuarioSchema } from './usuario/usuario.schema';
+import { VehiculoModule } from './Vehiculos/vehiculo.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { Usuario, UsuarioSchema } from './usuario/usuario.schema';
     AutenticadorModule,
     QrcodeModule,
     RegistroModule,
+    VehiculoModule
   ],
   providers: [PasswordMigrationService],
 })
