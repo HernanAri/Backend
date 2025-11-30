@@ -18,7 +18,7 @@ export class SesionLaboral {
   estado: 'activa' | 'finalizada';
 
   @Prop()
-  duracion?: number; // en segundos
+  duracion?: number; 
 }
 
 export const SesionLaboralSchema = SchemaFactory.createForClass(SesionLaboral);

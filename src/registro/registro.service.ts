@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { SesionLaboral, SesionLaboralDocument } from './registro.schema';
-import { Usuario } from 'src/usuario/usuario.schema';
+import { Usuario } from '../usuario/usuario.schema';
 
 @Injectable()
 export class RegistroService {
@@ -20,17 +20,16 @@ export class RegistroService {
     private jwtService: JwtService
   ) {}
 
-  // Método para verificar y extraer datos del token
+
   private async verificarToken(token: string) {
     try {
       const decoded = this.jwtService.verify(token);
       
-      // Verifica que el token sea del tipo correcto
+ 
       if (decoded.tipo !== 'qr-auth') {
         throw new UnauthorizedException('Token inválido');
       }
 
-      // Verifica que el usuario existe
       const usuario = await this.usuarioModel.findOne({ 
         idusuario: decoded.idusuario 
       }).exec();
@@ -54,11 +53,11 @@ export class RegistroService {
     }
   }
 
-  // Nuevo método para iniciar sesión con token
+
   async iniciarSesionConToken(token: string) {
     const { idusuario, usuario } = await this.verificarToken(token);
 
-    // Verifica si hay una sesión activa
+
     const sesionActiva = await this.sesionModel.findOne({
       idusuario: idusuario.toString(),
       estado: 'activa'
@@ -68,7 +67,7 @@ export class RegistroService {
       throw new ConflictException('Ya existe una sesión activa para este usuario');
     }
 
-    // Crea la nueva sesión
+
     const nuevaSesion = new this.sesionModel({
       idusuario: idusuario.toString(),
       inicio: new Date(),
@@ -83,12 +82,12 @@ export class RegistroService {
       usuario: {
         idusuario: usuario.idusuario,
         nombre: usuario.nombre,
-        // Agrega otros campos que necesites
+
       }
     };
   }
 
-  // Nuevo método para finalizar sesión con token
+
   async finalizarSesionConToken(token: string) {
     const { idusuario, usuario } = await this.verificarToken(token);
 
@@ -128,7 +127,7 @@ export class RegistroService {
     };
   }
 
-  // Métodos antiguos (mantenerlos por compatibilidad)
+
   async iniciarSesion(idusuario: string) {
     const sesionActiva = await this.sesionModel.findOne({
       idusuario,

@@ -1,5 +1,4 @@
-// src/test/usuario.spec.ts
-import { UsuarioService } from 'src/usuario/usuario.service';
+import { UsuarioService } from '../usuario/usuario.service';
 
 describe('UsuarioService', () => {
   let service: UsuarioService;
@@ -8,7 +7,10 @@ describe('UsuarioService', () => {
   beforeEach(() => {
     userModel = {
       find: jest.fn(),
-      findOne: jest.fn(),
+      findOne: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnThis(),
+        exec: jest.fn(),
+      }),
       findOneAndDelete: jest.fn(),
       findOneAndUpdate: jest.fn(),
       save: jest.fn(),
@@ -23,7 +25,8 @@ describe('UsuarioService', () => {
   });
 
   it('debería lanzar error si no encuentra usuario por id', async () => {
-    userModel.findOne.mockResolvedValue(null);
+    userModel.findOne().exec.mockResolvedValue(null);
+
     await expect(service.findOne('123')).rejects.toThrow('Usuario no encontrado');
   });
 

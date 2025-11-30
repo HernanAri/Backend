@@ -11,7 +11,7 @@ import { Usuario, UsuarioSchema } from 'src/usuario/usuario.schema';
       { name: Usuario.name, schema: UsuarioSchema }
     ]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'tu-secret-key-super-seguro', // Usa variables de entorno
+      secret: process.env.JWT_SECRET || 'tu-secret-key-super-seguro', 
     }),
   ],
   controllers: [QrcodeController],

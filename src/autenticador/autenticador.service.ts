@@ -3,7 +3,7 @@ import {
   UnauthorizedException 
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsuarioService } from 'src/usuario/usuario.service';
+import { UsuarioService } from '../usuario/usuario.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -15,7 +15,6 @@ export class AutenticadorService {
 
     async ValidarUser(username: string, pass: string): Promise<any> {
         try {
-            // ✅ findOne ahora incluye el password automáticamente
             const user = await this.userService.findOne(username);
             
             if (!user) {
@@ -23,13 +22,11 @@ export class AutenticadorService {
                 return null;
             }
 
-            // Verifica que el password exista
             if (!user.password) {
                 console.error('❌ Usuario sin contraseña:', username);
                 return null;
             }
 
-            // Compara contraseñas
             const isPasswordValid = await bcrypt.compare(pass, user.password);
             
             if (!isPasswordValid) {
@@ -39,8 +36,11 @@ export class AutenticadorService {
 
             console.log('✅ Usuario validado correctamente:', username);
 
-            // Elimina información sensible
-            const { password, ...result } = user.toObject();
+            const plainUser = typeof (user as any)?.toObject === 'function'
+                ? user.toObject()
+                : user;
+
+            const { password, ...result } = plainUser ;
             return result;
         } catch (error) {
             console.error('❌ Error en ValidarUser:', error);

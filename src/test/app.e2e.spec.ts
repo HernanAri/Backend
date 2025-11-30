@@ -1,4 +1,5 @@
-import { AppService } from 'src/app.service';
+import { AppService } from '../app.service';
+
 
 describe('AppService', () => {
   let service: AppService;

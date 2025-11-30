@@ -3,7 +3,7 @@ import * as QRCode from 'qrcode';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { Usuario } from 'src/usuario/usuario.schema';
+import { Usuario } from '../usuario/usuario.schema';
 
 @Injectable()
 export class QrcodeService {
@@ -29,22 +29,19 @@ export class QrcodeService {
         }
 
         try {
-            // Genera el token JWT con credenciales para login automático
             const payload = {
                 idusuario: usuario.idusuario,
                 username: usuario.username,
                 nombre: usuario.nombre,
                 rol: usuario.rol,
-                tipo: 'qr-login', // Identifica que es un token de login por QR
+                tipo: 'qr-login',
                 timestamp: Date.now()
             };
 
-            // Token sin expiración o con expiración muy larga para QR físicos
             const token = this.jwtService.sign(payload, { 
-                expiresIn: '365d' // 1 año de validez
+                expiresIn: '365d'
             });
 
-            // Genera el QR con el token
             const qrCodeDataUrl = await QRCode.toDataURL(token, {
                 errorCorrectionLevel: 'H',
                 type: 'image/png',
@@ -70,12 +67,12 @@ export class QrcodeService {
         try {
             const decoded = this.jwtService.verify(token);
             
-            // Verifica que sea un token de tipo qr-login
+
             if (decoded.tipo !== 'qr-login') {
                 throw new Error('Token QR inválido');
             }
 
-            // Busca el usuario para asegurar que aún existe y está activo
+
             const usuario = await this.usuarioModel
                 .findOne({ 
                     idusuario: decoded.idusuario,
@@ -87,7 +84,6 @@ export class QrcodeService {
                 throw new Error('Usuario no encontrado o inactivo');
             }
 
-            // Retorna info del usuario sin el password
             return {
                 valid: true,
                 idusuario: usuario.idusuario,
@@ -108,7 +104,7 @@ export class QrcodeService {
     async loginWithQR(token: string) {
         const userInfo = await this.verifyQRToken(token);
         
-        // Genera un nuevo access token para la sesión
+
         const payload = { 
             username: userInfo.username,
             sub: userInfo.idusuario,
@@ -118,13 +114,13 @@ export class QrcodeService {
         };
 
         const accessToken = this.jwtService.sign(payload, {
-            expiresIn: '8h' // Token de sesión de 8 horas
+            expiresIn: '8h' 
         });
 
         return {
             access_token: accessToken,
             token_type: 'Bearer',
-            expires_in: 28800, // 8 horas en segundos
+            expires_in: 28800, 
             user: {
                 idusuario: userInfo.idusuario,
                 username: userInfo.username,
