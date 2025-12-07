@@ -19,11 +19,11 @@ export class UsuarioService {
         return user.save();
     }
 
-    // ✅ MÉTODO CORREGIDO: Incluye password con select('+password')
+
     async findOne(username: string) {
         const usuario = await this.userModel
             .findOne({ username })
-            .select('+password') // ← CRÍTICO: Incluye el password
+            .select('+password') 
             .exec();
         
         if (!usuario) {
