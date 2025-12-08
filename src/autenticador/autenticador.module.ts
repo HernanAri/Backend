@@ -18,7 +18,7 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
       { name: Usuario.name, schema: UsuarioSchema }
     ]),
     JwtModule.register({
-      secret: 'Pollo', // FIXED: Use consistent secret
+      secret: 'Pollo',
       signOptions: { 
         expiresIn: '1h'
       },

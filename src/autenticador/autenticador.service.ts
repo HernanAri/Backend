@@ -57,7 +57,10 @@ export class AutenticadorService {
             tipo: 'access_token'
         };
 
-        const accessToken = this.jwtService.sign(payload);
+        const accessToken = this.jwtService.sign(payload,{
+            secret: 'Pollo',
+            expiresIn: '1h'
+        });
 
         return {
             access_token: accessToken,

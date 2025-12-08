@@ -11,10 +11,14 @@ import { Usuario, UsuarioSchema } from 'src/usuario/usuario.schema';
       { name: Usuario.name, schema: UsuarioSchema }
     ]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'tu-secret-key-super-seguro', 
+      secret: 'Pollo', // IMPORTANTE: Mismo secret en todo el proyecto
+      signOptions: { 
+        expiresIn: '365d' 
+      },
     }),
   ],
   controllers: [QrcodeController],
   providers: [QrcodeService],
+  exports: [QrcodeService],
 })
 export class QrcodeModule {}

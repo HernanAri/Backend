@@ -40,10 +40,10 @@ export class Usuario {
     @Prop({ required: true, trim: true })
     cargo: string;
 
-    @Prop({ trim: true })
+    @Prop({ trim: true, default: 'Ninguno' })
     vehiculo: string;
 
-    @Prop({ trim: true })
+    @Prop({ trim: true, default: '' })
     matricula: string;
 
     @Prop({ 
@@ -55,9 +55,9 @@ export class Usuario {
     @Prop({
         required: true,
         unique: true,
-        lowercase: true, // Normaliza el email
+        lowercase: true, 
         trim: true,
-        match: [/^\S+@\S+\.\S+$/, 'Email inválido'] // Validación básica
+        match: [/^\S+@\S+\.\S+$/, 'Email inválido'] 
     })
     correo: string;
 
