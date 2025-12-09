@@ -17,7 +17,7 @@ import { VehiculoModule } from './Vehiculos/vehiculo.module';
     }),
     MongooseModule.forRoot(
       process.env.MONGODB_URI || 
-      'mongodb+srv://proyecto_final:prueba@bd.qssnf.mongodb.net/'
+      'mongodb+srv://proyecto_final:prueba@bd.qssnf.mongodb.net/bd?retryWrites=true&w=majority'
     ),
     MongooseModule.forFeature([
       { name: Usuario.name, schema: UsuarioSchema }

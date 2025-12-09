@@ -164,7 +164,26 @@ export class RegistroService {
     sesion.duracion = duracion;
     sesion.estado = 'finalizada';
 
-    return sesion.save();
+    const sesionFinalizada = await sesion.save();
+
+    const horas = Math.floor(duracion / 3600);
+    const minutos = Math.floor((duracion % 3600) / 60);
+    const segundos = duracion % 60;
+
+    const formato = [
+      horas.toString().padStart(2, '0'),
+      minutos.toString().padStart(2, '0'),
+      segundos.toString().padStart(2, '0')
+    ].join(':'); 
+
+    return {
+      mensaje: 'Sesión finalizada exitosamente',
+      sesion: sesionFinalizada,
+      duracion: {
+        segundos: duracion,
+        formato: formato
+      }
+    }
   }
 
   async obtenerSesiones(idusuario: string) {
