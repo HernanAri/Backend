@@ -16,25 +16,6 @@ export class AutenticadorService {
     async ValidarUser(username: string, pass: string): Promise<any> {
         try {
             const user = await this.userService.findOne(username);
-            
-            if (!user) {
-                console.log('❌ Usuario no encontrado:', username);
-                return null;
-            }
-
-            if (!user.password) {
-                console.error('❌ Usuario sin contraseña:', username);
-                return null;
-            }
-
-            const isPasswordValid = await bcrypt.compare(pass, user.password);
-            
-            if (!isPasswordValid) {
-                console.log('❌ Contraseña incorrecta para:', username);
-                return null;
-            }
-
-            console.log('✅ Usuario validado correctamente:', username);
 
             const plainUser = typeof (user as any)?.toObject === 'function'
                 ? user.toObject()
@@ -43,7 +24,6 @@ export class AutenticadorService {
             const { password, ...result } = plainUser ;
             return result;
         } catch (error) {
-            console.error('❌ Error en ValidarUser:', error);
             throw new UnauthorizedException('Error al validar credenciales');
         }
     }

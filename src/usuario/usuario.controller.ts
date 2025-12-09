@@ -152,16 +152,12 @@ export class UsuarioController {
                         </html>
                     `
                 });
-                
-                console.log(`✅ Correo enviado a ${usuario.correo}`);
             } catch (emailError) {
                 console.error('❌ Error al enviar correo:', emailError);
-                // No lanzar error, solo registrar
             }
             
             return usuario;
         } catch (error) {
-            console.error('Error al crear usuario:', error);
 
             if (error.code === 11000) {
                 const duplicated = Object.keys(error.keyPattern || {});
@@ -181,7 +177,6 @@ export class UsuarioController {
             const user = await this.usuarioService.eliminar(idusuario.toString());
             if (!user) throw new NotFoundException('Usuario no encontrado');
         } catch (error) {
-            console.error('Error al eliminar usuario:', error);
             if (error instanceof NotFoundException) throw error;
             throw new BadRequestException(error.message || 'Error al eliminar usuario');
         }

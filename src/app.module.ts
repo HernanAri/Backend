@@ -19,7 +19,6 @@ import { VehiculoModule } from './Vehiculos/vehiculo.module';
       process.env.MONGODB_URI || 
       'mongodb+srv://proyecto_final:prueba@bd.qssnf.mongodb.net/'
     ),
-    // Importa el schema de Usuario para el servicio de migración
     MongooseModule.forFeature([
       { name: Usuario.name, schema: UsuarioSchema }
     ]),

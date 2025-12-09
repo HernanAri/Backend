@@ -55,14 +55,11 @@ export class QrcodeService {
             };
             
             this.qrSessions.set(shortToken, session);
-            
-            console.log('📝 QR generado para:', usuario.username, '| Token:', shortToken);
 
-            // Generar QR con solo el token corto
             const qrCodeDataUrl = await QRCode.toDataURL(shortToken, {
-                errorCorrectionLevel: 'L',  // Mínima corrección = QR más simple
+                errorCorrectionLevel: 'L', 
                 type: 'image/png',
-                width: 500,                  // Más pequeño
+                width: 500,               
                 margin: 1,
                 color: {
                     dark: '#000000',
@@ -70,10 +67,8 @@ export class QrcodeService {
                 }
             });
 
-            console.log('✅ QR ultra-compacto generado. Token length:', shortToken.length);
             return qrCodeDataUrl;
         } catch (err) {
-            console.error('❌ Error generando QR:', err);
             throw new Error(`Error al generar el código QR: ${err.message}`);
         }
     }
@@ -83,12 +78,11 @@ export class QrcodeService {
      */
     private cleanExpiredSessions() {
         const now = new Date();
-        const expiredTime = 7 * 24 * 60 * 60 * 1000; // 7 días
+        const expiredTime = 7 * 24 * 60 * 60 * 1000; 
         
         for (const [token, session] of this.qrSessions.entries()) {
             if (now.getTime() - session.createdAt.getTime() > expiredTime) {
                 this.qrSessions.delete(token);
-                console.log('🧹 Token QR expirado eliminado:', token);
             }
         }
     }
@@ -98,17 +92,12 @@ export class QrcodeService {
      */
     async verifyQRToken(token: string) {
         try {
-            console.log('🔍 Verificando token QR:', token);
-            
-            // Buscar sesión en memoria
             const session = this.qrSessions.get(token);
             
             if (!session) {
-                console.error('❌ Token QR no encontrado o expirado');
                 throw new UnauthorizedException('QR inválido o expirado');
             }
 
-            // Verificar que el usuario sigue existiendo
             const usuario = await this.usuarioModel
                 .findOne({ 
                     idusuario: session.idusuario,
@@ -117,20 +106,14 @@ export class QrcodeService {
                 .exec();
 
             if (!usuario) {
-                // Eliminar sesión inválida
                 this.qrSessions.delete(token);
-                console.error('❌ Usuario no encontrado');
                 throw new NotFoundException('Usuario no encontrado');
             }
 
-            // Verificar password
             if (usuario.password !== session.password) {
                 this.qrSessions.delete(token);
-                console.error('❌ Credenciales modificadas');
                 throw new UnauthorizedException('Credenciales inválidas');
             }
-
-            console.log('✅ Token verificado:', usuario.nombre);
 
             return {
                 valid: true,
@@ -148,7 +131,6 @@ export class QrcodeService {
                 RH: usuario.RH
             };
         } catch (err) {
-            console.error('❌ Error verificando token:', err);
             
             if (err instanceof NotFoundException || err instanceof UnauthorizedException) {
                 throw err;
@@ -163,7 +145,6 @@ export class QrcodeService {
      */
     async loginWithQR(token: string) {
         try {
-            console.log('🔐 Iniciando login con QR...');
             
             const userInfo = await this.verifyQRToken(token);
 
@@ -180,8 +161,6 @@ export class QrcodeService {
                 expiresIn: '8h' 
             });
 
-            console.log('✅ Login exitoso para:', userInfo.nombre);
-
             return {
                 access_token: accessToken,
                 token_type: 'Bearer',
@@ -197,7 +176,6 @@ export class QrcodeService {
                 }
             };
         } catch (err) {
-            console.error('❌ Error en login con QR:', err);
             throw err;
         }
     }
@@ -206,7 +184,6 @@ export class QrcodeService {
      * Obtiene información del usuario desde el QR
      */
     async getUserInfoFromQR(token: string) {
-        console.log('ℹ️ Obteniendo info de usuario desde QR...');
         return await this.verifyQRToken(token);
     }
 
@@ -228,7 +205,6 @@ export class QrcodeService {
                 count++;
             }
         }
-        console.log(`🗑️ ${count} tokens QR invalidados para usuario ${idusuario}`);
         return count;
     }
 }
