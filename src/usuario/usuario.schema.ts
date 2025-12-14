@@ -75,7 +75,7 @@ export class Usuario {
 
     @Prop({ 
         required: true,
-        enum: ['Admin', 'Usuario', 'Supervisor', 'Vigilante','admin', 'usuario', 'supervisor', 'vigilante'],
+        enum: ['Admin', 'Empleado', 'Supervisor', 'Vigilante','admin', 'empleado', 'supervisor', 'vigilante'],
         default: 'usuario'
     })
     rol: string;
