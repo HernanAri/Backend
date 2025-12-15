@@ -16,7 +16,7 @@ import { VehiculoModule } from './Vehiculos/vehiculo.module';
       envFilePath: '.env',
     }),
     MongooseModule.forRoot(
-      process.env.MONGODB_URI || 
+      process.env.MONGODB_URL || 
       'mongodb+srv://proyecto_final:prueba@bd.qssnf.mongodb.net'
     ),
     MongooseModule.forFeature([
